@@ -1,0 +1,8 @@
+{
+  "name": "meet.new",
+  "description": "An anonymous random chat platform for text and video conversations, featuring interest-based matching and a modern UI.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
