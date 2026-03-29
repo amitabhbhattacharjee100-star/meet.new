@@ -206,6 +206,11 @@ export default function Chat() {
 
         {/* Chat Area */}
         <main className="flex-1 flex flex-col relative bg-white">
+          {/* Top Ad Banner */}
+          <div className="px-4 pt-2">
+            <AdSlot slotId="CHAT_TOP_BANNER" />
+          </div>
+
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             <AnimatePresence initial={false}>
               {messages.map((msg) => (

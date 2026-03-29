@@ -9,7 +9,8 @@ import AdOverlay from "../components/AdOverlay";
 import { getCountryInfo } from "../services/geminiService";
 
 export default function VideoChat() {
-  const [status, setStatus] = useState<"waiting" | "connected" | "disconnected">("waiting");
+  const [status, setStatus] = useState<"waiting" | "connected" | "disconnected" | "error">("waiting");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [partnerCountry, setPartnerCountry] = useState<string | null>(null);
   const [countryInfo, setCountryInfo] = useState<string | null>(null);
   const [loadingInfo, setLoadingInfo] = useState(false);
@@ -38,15 +39,24 @@ export default function VideoChat() {
   useEffect(() => {
     const initMedia = async () => {
       try {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          throw new Error("Your browser does not support video chat.");
+        }
         const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         localStreamRef.current = stream;
         if (localVideoRef.current) localVideoRef.current.srcObject = stream;
         
         initPeer(stream);
-      } catch (err) {
+      } catch (err: any) {
         console.error("Failed to get media", err);
-        alert("Please enable camera and microphone access to use video chat.");
-        navigate("/");
+        setStatus("error");
+        if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+          setErrorMessage("Camera and microphone access was denied. Please check your browser settings and allow access to use video chat.");
+        } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
+          setErrorMessage("No camera or microphone found. Please connect your devices and try again.");
+        } else {
+          setErrorMessage(err.message || "An error occurred while accessing your camera and microphone.");
+        }
       }
     };
 
@@ -188,9 +198,14 @@ export default function VideoChat() {
       <div className="flex-1 flex overflow-hidden">
         {/* Video Grid */}
         <main className="flex-1 flex flex-col p-4 gap-4 relative">
-          <div className="flex-1 grid grid-rows-2 gap-4">
+          {/* Top Ad Banner */}
+          <div className="pb-2">
+            <AdSlot slotId="VIDEO_CHAT_TOP_BANNER" />
+          </div>
+
+          <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Remote Video */}
-            <div className="relative bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-800 shadow-2xl">
+            <div className="relative bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-800 shadow-2xl aspect-video md:aspect-auto">
               <video
                 ref={remoteVideoRef}
                 autoPlay
@@ -201,6 +216,31 @@ export default function VideoChat() {
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-500 gap-4">
                   <div className="w-12 h-12 border-4 border-orange-600 border-t-transparent rounded-full animate-spin"></div>
                   <p className="font-bold uppercase tracking-widest text-sm">Finding Stranger...</p>
+                </div>
+              )}
+              {status === "error" && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center bg-zinc-950/90 backdrop-blur-md z-50">
+                  <div className="bg-red-500/20 p-4 rounded-full mb-6">
+                    <VideoOff className="w-12 h-12 text-red-500" />
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-4">Media Access Error</h3>
+                  <p className="text-zinc-400 mb-8 max-w-md leading-relaxed">
+                    {errorMessage}
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-4 w-full max-w-xs">
+                    <button 
+                      onClick={() => window.location.reload()}
+                      className="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 rounded-xl transition-all active:scale-95"
+                    >
+                      Try Again
+                    </button>
+                    <button 
+                      onClick={() => navigate("/")}
+                      className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-3 rounded-xl transition-all active:scale-95"
+                    >
+                      Go Home
+                    </button>
+                  </div>
                 </div>
               )}
               {status === "disconnected" && (
@@ -214,13 +254,13 @@ export default function VideoChat() {
             </div>
 
             {/* Local Video */}
-            <div className="relative bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-800 shadow-2xl">
+            <div className="relative bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-800 shadow-2xl aspect-video md:aspect-auto">
               <video
                 ref={localVideoRef}
                 autoPlay
                 playsInline
                 muted
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover scale-x-[-1]"
               />
               <div className="absolute top-4 left-4 bg-black/50 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-white uppercase tracking-widest">
                 You

@@ -66,18 +66,18 @@ export default function AdSlot({ slotId }: { slotId: string }) {
   return (
     <div 
       ref={containerRef}
-      className="w-full bg-gray-100 border-2 border-dashed border-gray-300 rounded-2xl p-6 flex flex-col items-center justify-center min-h-[140px] my-8 overflow-hidden transition-all hover:border-orange-300 hover:bg-orange-50/30 group"
+      className="w-full bg-gray-100 border-2 border-dashed border-gray-300 rounded-xl p-3 flex flex-col items-center justify-center min-h-[100px] my-4 overflow-hidden transition-all hover:border-orange-300 hover:bg-orange-50/30 group"
     >
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-pulse"></div>
-        <span className="text-[11px] font-black text-gray-400 uppercase tracking-[0.3em] group-hover:text-orange-600 transition-colors">Advertisement</span>
-        <div className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-pulse"></div>
+      <div className="flex items-center gap-2 mb-2">
+        <div className="w-1 h-1 bg-orange-500 rounded-full animate-pulse"></div>
+        <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] group-hover:text-orange-600 transition-colors">Advertisement</span>
+        <div className="w-1 h-1 bg-orange-500 rounded-full animate-pulse"></div>
       </div>
       
-      <div className="w-full flex justify-center min-w-[300px] relative">
+      <div className="w-full flex justify-center min-w-[250px] relative">
         {/* AdSense Element */}
         <ins className="adsbygoogle"
-             style={{ display: 'block', width: '100%', minWidth: '300px', minHeight: '100px' }}
+             style={{ display: 'block', width: '100%', minWidth: '250px', minHeight: '50px' }}
              data-ad-client="ca-pub-2186632548756301"
              data-ad-slot={slotId}
              data-ad-format="auto"
@@ -86,16 +86,16 @@ export default function AdSlot({ slotId }: { slotId: string }) {
              
         {/* Dev Placeholder - Only visible if AdSense doesn't fill it */}
         <div className="absolute inset-0 -z-10 flex items-center justify-center bg-gray-200/50 rounded-lg border border-gray-300">
-          <p className="text-[10px] font-mono text-gray-400">Ad Slot: {slotId}</p>
+          <p className="text-[9px] font-mono text-gray-400">Ad Slot: {slotId}</p>
         </div>
       </div>
       
-      <div className="flex items-center gap-4 mt-4">
-        <p className="text-[9px] text-gray-400 font-mono opacity-40 uppercase tracking-tighter">Secure Ad Provider</p>
-        <div className="w-1 h-1 bg-gray-300 rounded-full"></div>
+      <div className="flex items-center gap-3 mt-2">
+        <p className="text-[8px] text-gray-400 font-mono opacity-40 uppercase tracking-tighter">Secure Ad Provider</p>
+        <div className="w-0.5 h-0.5 bg-gray-300 rounded-full"></div>
         <button 
           onClick={() => window.open("/premium", "_blank")}
-          className="text-[9px] text-orange-600 font-bold hover:underline uppercase tracking-tighter"
+          className="text-[8px] text-orange-600 font-bold hover:underline uppercase tracking-tighter"
         >
           Remove Ads
         </button>
